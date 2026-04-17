@@ -30,7 +30,7 @@ export default function GetNews() {
       }
     };
     getNews();
-  }, [refreshTrigger]);
+  }, [refreshTrigger, API_KEY]);
 
   const handleRefresh = () => {
     setRefreshTrigger(prev => prev + 1);
@@ -38,7 +38,7 @@ export default function GetNews() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-[400px]">
+      <div className="flex justify-center items-center min-h-100">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
       </div>
     );
@@ -82,7 +82,7 @@ export default function GetNews() {
                   className="w-full h-48 object-cover"
                 />
               )}
-              <div className="p-4 flex flex-col flex-grow">
+              <div className="p-4 flex flex-col grow">
                 <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-2 line-clamp-2">
                   {article.title}
                 </h2>

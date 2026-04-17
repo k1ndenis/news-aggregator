@@ -1,7 +1,7 @@
 'use client';
 
 import { Article } from "@/types/article";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 interface Props {
   setNews: React.Dispatch<React.SetStateAction<Article[] | null>>
@@ -37,6 +37,7 @@ export default function SearchInput({ setNews, setLoading, setError }: Props) {
     if (!currentInput) return;
     console.log("Поиск:", currentInput);
     getNews();
+    setCurrentInput("");
   };
 
   return (
