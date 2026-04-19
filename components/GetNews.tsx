@@ -3,6 +3,7 @@
 import { Article } from "@/types/article";
 import { useEffect, useState } from "react"
 import SearchInput from "./SearchInput";
+import { get, set } from "idb-keyval";
 
 export default function GetNews() {
   const URL = "https://newsapi.org/v2/top-headlines?country=us&category=business&apiKey="
@@ -35,6 +36,21 @@ export default function GetNews() {
   const handleRefresh = () => {
     setRefreshTrigger(prev => prev + 1);
   }
+
+  const addToFavorites = async (article: Article) => {
+    try {
+      const favorites: Article[] = (await get('favorites')) || [];
+
+      const isArleadyIn = favorites.some(item => item.url === article.url);
+
+      if (!isArleadyIn) {
+        const updatedFavorites = [article, ...favorites];
+        await set('favorites', updatedFavorites);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   if (loading) {
     return (
@@ -93,14 +109,24 @@ export default function GetNews() {
                   <span>{article.source.name}</span>
                   <span>{new Date(article.publishedAt).toLocaleDateString()}</span>
                 </div>
-                <a
-                  href={article.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-4 inline-block text-blue-500 hover:text-blue-600 text-sm font-medium transition-colors"
-                >
-                  Читать далее →
-                </a>
+                <div className="mt-6 pt-4 border-t border-gray-100 dark:border-gray-700 flex items-center justify-between gap-3">
+                  <a
+                    href={article.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 dark:text-blue-400 hover:underline text-sm font-bold transition-all"
+                  >
+                    Читать далее →
+                  </a>
+                  
+                  <button
+                    onClick={() => addToFavorites(article)}
+                    className="flex items-center gap-2 px-4 py-2 bg-gray-50 dark:bg-gray-700 hover:bg-yellow-50 dark:hover:bg-yellow-900/20 text-gray-700 dark:text-gray-200 hover:text-yellow-600 dark:hover:text-yellow-400 rounded-lg text-xs font-bold uppercase tracking-wider transition-colors duration-200 border border-gray-200 dark:border-gray-600 hover:border-yellow-200 cursor-pointer"
+                  >
+                    <span>⭐</span>
+                    Добавить
+                  </button>
+                </div>
               </div>
             </div>
           ))}
